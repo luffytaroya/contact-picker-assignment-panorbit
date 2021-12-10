@@ -86,6 +86,7 @@ const contactsList = [
 class App extends Component {
   state = {
     displayContactsList: false,
+    searchResults: contactsList,
     searchInput: '',
     contactDetailsList: contactsList,
   }
@@ -97,21 +98,20 @@ class App extends Component {
   }
 
   onChangeSearchInput = event => {
+    const {contactDetailsList} = this.state
+
+    const modifiedSearchResults = contactDetailsList.filter(eachContact =>
+      eachContact.name.toLowerCase().includes(event.target.value.toLowerCase()),
+    )
+
     this.setState({
+      searchResults: modifiedSearchResults,
       searchInput: event.target.value,
     })
   }
 
   render() {
-    const {displayContactsList, searchInput, contactDetailsList} = this.state
-
-    const updatedContactsList = []
-    contactDetailsList.map(each => updatedContactsList.push(each.name))
-    updatedContactsList.sort()
-
-    const searchResults = updatedContactsList.filter(eachContact =>
-      eachContact.toLowerCase().includes(searchInput.toLowerCase()),
-    )
+    const {displayContactsList, searchResults, searchInput} = this.state
 
     const toNotDisplayClassName = displayContactsList ? 'close-contacts' : ''
     return (
@@ -146,7 +146,7 @@ class App extends Component {
                 {searchResults.map(each => (
                   <Contacts
                     key={each.id}
-                    contactList={updatedContactsList}
+                    contactList={searchResults}
                     contactDetails={each}
                   />
                 ))}
@@ -155,7 +155,7 @@ class App extends Component {
                 {searchResults.map(each => (
                   <QuickNavbar
                     key={each.id}
-                    contactList={updatedContactsList}
+                    contactList={searchResults}
                     contactDetails={each}
                   />
                 ))}
